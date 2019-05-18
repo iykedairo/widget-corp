@@ -4,8 +4,7 @@
     <list default="true" id="96cea37f-49e4-42d9-bc69-c37520e1a3b0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/content.php" afterPath="$PROJECT_DIR$/content.php" />
-      <change beforePath="$PROJECT_DIR$/includes/TODO.php" afterPath="$PROJECT_DIR$/includes/TODO.php" />
-      <change beforePath="$PROJECT_DIR$/includes/footer.php" afterPath="$PROJECT_DIR$/includes/footer.php" />
+      <change beforePath="$PROJECT_DIR$/includes/TODO.php" afterPath="$PROJECT_DIR$/includes/operatons.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,65 +15,27 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="content.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="content.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/content.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state relative-caret-position="119">
+              <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding>
-                <marker date="1558205287726" expanded="true" signature="730:770" ph="..." />
+                <marker date="1558208924178" expanded="true" signature="858:898" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="footer.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/includes/footer.php">
+      <file leaf-file-name="operatons.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/includes/operatons.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="25" lean-forward="false" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="connection.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/includes/connection.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="35" column="5" lean-forward="true" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
+            <state relative-caret-position="102">
+              <caret line="6" column="72" lean-forward="false" selection-start-line="6" selection-start-column="72" selection-end-line="6" selection-end-column="72" />
               <folding>
-                <marker date="1558114193408" expanded="true" signature="997:1054" ph="..." />
-                <marker date="1558114193408" expanded="true" signature="1055:1232" ph="..." />
-                <marker date="1558114193408" expanded="true" signature="1156:1170" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Actions.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../TODO/Actions.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="73" column="28" lean-forward="true" selection-start-line="73" selection-start-column="28" selection-end-line="73" selection-end-column="28" />
-              <folding>
-                <marker date="1558080865740" expanded="true" signature="934:954" ph="SELECT ${$fi... ${$table}" />
-                <marker date="1558080865740" expanded="true" signature="1573:1679" ph="INSERT INTO ${$table}... " />
-                <marker date="1558080865740" expanded="true" signature="2132:2143" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TODO.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/includes/TODO.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="16" column="77" lean-forward="false" selection-start-line="16" selection-start-column="77" selection-end-line="16" selection-end-column="77" />
-              <folding>
-                <marker date="1558205390100" expanded="true" signature="326:346" ph="SELECT ${$fi... ${$table}" />
-                <marker date="1558205390100" expanded="true" signature="326:353" ph="SELECT ${$fi... ${$table}" />
-                <marker date="1558205390100" expanded="true" signature="326:354" ph="SELECT ${$fi... ${$table}" />
+                <marker date="1558208481467" expanded="true" signature="333:353" ph="SELECT ${$fi... ${$table}" />
+                <marker date="1558208481467" expanded="true" signature="333:360" ph="SELECT ${$fi... ${$table}" />
+                <marker date="1558208481467" expanded="true" signature="333:361" ph="SELECT ${$fi... ${$table}" />
               </folding>
             </state>
           </provider>
@@ -102,8 +63,9 @@
         <option value="$PROJECT_DIR$/includes/constants.php" />
         <option value="$PROJECT_DIR$/includes/connection.php" />
         <option value="$PROJECT_DIR$/includes/footer.php" />
-        <option value="$PROJECT_DIR$/content.php" />
         <option value="$PROJECT_DIR$/includes/TODO.php" />
+        <option value="$PROJECT_DIR$/includes/operatons.php" />
+        <option value="$PROJECT_DIR$/content.php" />
       </list>
     </option>
   </component>
@@ -185,12 +147,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1558083982003</updated>
-      <workItem from="1558083998467" duration="23552000" />
+      <workItem from="1558083998467" duration="27074000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23552000" />
+    <option name="totallyTimeSpent" value="27074000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
@@ -238,13 +200,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../TODO/Actions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="225">
           <caret line="73" column="28" lean-forward="true" selection-start-line="73" selection-start-column="28" selection-end-line="73" selection-end-column="28" />
           <folding>
             <marker date="1558080865740" expanded="true" signature="934:954" ph="SELECT ${$fi... ${$table}" />
             <marker date="1558080865740" expanded="true" signature="1573:1679" ph="INSERT INTO ${$table}... " />
             <marker date="1558080865740" expanded="true" signature="2132:2143" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/includes/footer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="25" lean-forward="false" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -260,32 +230,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/includes/footer.php">
+    <entry file="file://$PROJECT_DIR$/includes/operatons.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="25" lean-forward="false" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
-          <folding />
+        <state relative-caret-position="102">
+          <caret line="6" column="72" lean-forward="false" selection-start-line="6" selection-start-column="72" selection-end-line="6" selection-end-column="72" />
+          <folding>
+            <marker date="1558208481467" expanded="true" signature="333:353" ph="SELECT ${$fi... ${$table}" />
+            <marker date="1558208481467" expanded="true" signature="333:360" ph="SELECT ${$fi... ${$table}" />
+            <marker date="1558208481467" expanded="true" signature="333:361" ph="SELECT ${$fi... ${$table}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/content.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="119">
+          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
-            <marker date="1558205287726" expanded="true" signature="730:770" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/includes/TODO.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="16" column="77" lean-forward="false" selection-start-line="16" selection-start-column="77" selection-end-line="16" selection-end-column="77" />
-          <folding>
-            <marker date="1558205390100" expanded="true" signature="326:346" ph="SELECT ${$fi... ${$table}" />
-            <marker date="1558205390100" expanded="true" signature="326:353" ph="SELECT ${$fi... ${$table}" />
-            <marker date="1558205390100" expanded="true" signature="326:354" ph="SELECT ${$fi... ${$table}" />
+            <marker date="1558208924178" expanded="true" signature="858:898" ph="..." />
           </folding>
         </state>
       </provider>

@@ -2,7 +2,7 @@
 <?php
 include_once "./includes/connection.php";
 require_once "./includes/functions.php";
-require_once "./includes/TODO.php";
+require_once "./includes/operatons.php";
 include_once "./includes/header.php";
 ?>
 
@@ -11,12 +11,15 @@ include_once "./includes/header.php";
       <td id="navigation">
           <ul class="subjects">
       <?php
-      retrieve("subjects", "*", "", $connection, function ($subject) {
-          echo "<li>{$subject['menu_name']}</li>";
+      $subjects = retrieve("subjects", "*", " ORDER BY POSITION ASC", $connection);
 
+      for_each( $subjects , function ($subject) {
+          echo "<li>{$subject['menu_name']}</li>";
           global $connection;
           echo "<ul class='pages'>";
-          retrieve("pages", " * ", "WHERE subject_id = {$subject['id']}", $connection, function ($page) {
+          $pages = retrieve("pages", " * ", "WHERE subject_id = {$subject['id']} ORDER BY POSITION ASC", $connection);
+
+          for_each($pages, function ($page) {
               echo "<li>{$page['menu_name']}</li>";
           });
           echo "</ul>";

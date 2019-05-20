@@ -1,7 +1,6 @@
 
 <?php
 include_once "./includes/connection.php";
-require_once "./includes/functions.php";
 require_once "./includes/operatons.php";
 include_once "./includes/header.php";
 

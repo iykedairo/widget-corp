@@ -1,7 +1,33 @@
 <?php
 
 
+//    store('subjects', 'id, date, email, response', $con);
+    function store($PDO_connection, $table, Array $fields, $clauses = ""){
+        $returnValue = [];
+        try {
+            $Query = build_sql_insert($table, $fields);
+            $stmt = $PDO_connection->prepare($Query);
+            if ($stmt->execute()){
+                $returnValue["success"] = true;
+                $returnValue["message"] = "SUCCESS!";
+            }
+        }
+        catch(PDOException $error) {
+            $returnValue["success"] = false;
+            $returnValue["message"] = "<h1>Record could not be created at this time</h1>" .
+                "<p style='color: red;'>$Query</p>" . $error->getMessage() . "<br />";
+        }
+        return $returnValue;
+    }
 
+    function build_sql_insert($table, $data) {
+        $key = array_keys($data);
+        $val = array_values($data);
+        $sql = "INSERT INTO $table (" . implode(', ', $key) . ") "
+            . "VALUES ('" . implode("', '", $val) . "')";
+
+        return($sql);
+    }
 
 //    retrieve('subjects', 'id, date, email, response', $con);
 function retrieve($table, $fields, $clauses, $PDO_connection, $fn = null){

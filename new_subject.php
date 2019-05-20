@@ -17,7 +17,37 @@ selection(); //Pulls in page and subject selection procedures
             </ul>
         </td>
         <td id="page">
+            <h2>Add subject</h2>
+            <form action="create_subject.php" method="post">
 
+                <p>Subject name: <input type="text" name="menu_name" id="menu_name" value=""></p>
+
+                <p>Position:
+                    <select name="position">
+                        <?php
+                        $count = 0;
+                        retrieve("subjects", "*", " ORDER BY POSITION ASC", $connection,
+                            function($v, $k, $r) use (&$count) {
+                                $count++;
+                                echo "<option value='{$count}'>$count</option>";
+                            });
+                        $count++;
+                        echo "<option value='{$count}'>$count</option>"; //Simulating next postion
+                        ?>
+
+                    </select>
+                </p>
+
+                <p>Visible:
+                    <input type="radio" name="visible" value="0"> No&nbsp;
+                    <input type="radio" name="visible" value="1"> Yes
+                </p>
+
+                <input type="submit" value="Add Subject">
+
+            </form>
+            <br />
+            <a href="content.php">Cancel</a>
         </td>
     </tr>
 </table>

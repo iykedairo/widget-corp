@@ -14,13 +14,16 @@ function retrieve($table, $fields, $clauses, $PDO_connection, $fn = null){
     }
 
     try {
+//        echo "<h2>SELECT $fields FROM $table $clauses</h2>";
         $stmt = $PDO_connection->prepare("SELECT $fields FROM $table $clauses");
         if($stmt->execute()){
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $result = new RecursiveArrayIterator($stmt->fetchAll());
 
             foreach($result as $k => $v) {
-                $fn( $v );
+                if ( ($current = $fn( $v, $k, $result ) )) {
+                    return $current;
+                }
             }
         }
 
@@ -34,7 +37,9 @@ function retrieve($table, $fields, $clauses, $PDO_connection, $fn = null){
 
 function for_each($list, $fn) {
     foreach($list as $k => $v) {
-        $fn( $v, $k, $list );
+        if ($fn( $v, $k, $list )) {
+            break;
+        }
     }
 }
 

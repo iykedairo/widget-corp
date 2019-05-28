@@ -90,7 +90,8 @@ selection(); //Pulls in page and subject selection procedures
                 <a href="delete_subject.php?subj=<?php echo urlencode($selected_subject['id']) ?>"
                    onclick=" return confirm('Are you sure you want to delete <?php echo $selected_subject["menu_name"] ?>');">
                     Delete subject</a>
-
+                    &nbsp;
+                    <a href="new_page.php?subj=<?php echo urlencode($selected_subject['id']) ?>" "email me">Create Page</a>
             </form>
             <br />
             <a href="content.php">Cancel</a>

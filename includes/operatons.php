@@ -2,6 +2,21 @@
 
 
 //    store('subjects', 'id, date, email, response', $con);
+   function delete_record($connection, $table, $clauses, $limit = 1) {
+    static $Q;
+    mapper($clauses)->generate_query(" AND ", "keys",
+        function ($pad, $list, $generated) use ($clauses, $connection, $table, $limit, &$Q) {
+            $Q = "DELETE FROM $table WHERE $generated LIMIT $limit";
+        });
+    echo $Q;
+    $statement = $connection->prepare($Q);
+    if($statement->execute($clauses)) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
     function store($PDO_connection, $table, Array $fields, $clauses = ""){
         $returnValue = [];
         try {

@@ -26,7 +26,22 @@ include_once "./includes/header.php";
           }
 
           else if (!is_null($selected_page)) {
-              echo "<div>{$selected_page['content']}</div>";
+              $subject = get_selected_id("subjects", $selected_page["subject_id"]);
+              $encodedSubjectId = urlencode($subject["id"]);
+              $encodedPageId = urlencode($selected_page["id"]);
+              $subject_name = $subject["menu_name"];
+              $page_name = $selected_page["menu_name"];
+              echo "
+
+            <div>
+            <p>{$selected_page['content']}</p>
+            
+            <p><a href='edit_page.php?page={$encodedPageId}'>Edit $page_name</a>  </p>
+            <p><a href='new_page.php?subj={$encodedSubjectId}'>Add new page to $subject_name</a></p>
+</div>
+                
+            ";
+
           } else {
               echo  "<h2>Select a page to edit</h2>";
           }

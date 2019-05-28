@@ -113,7 +113,7 @@ selection(); //Pulls in page and page selection procedures
                 <input type="submit" value="Update Page" name="submit">
 
                 &nbsp; &nbsp;
-                <a href="delete_page.php?subj=<?php echo urlencode($selected_page['id']) ?>"
+                <a href="delete_page.php?page=<?php echo urlencode($selected_page['id']) ?>"
                    onclick=" return confirm('Are you sure you want to delete <?php echo $selected_page["menu_name"] ?>');">
                     Delete page</a>
 

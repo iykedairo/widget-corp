@@ -2,7 +2,7 @@
 require_once "./includes/connection.php";
 require_once "./includes/operatons.php";
 
-if (intval($_GET["subj"]) == 0) { //If we didn't get a valid page id we decline further exec
+if (intval($_GET["page"]) == 0) { //If we didn't get a valid page id we decline further exec
     redirect_to("content.php");
 }
 $id = $_GET["page"];

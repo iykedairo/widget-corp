@@ -130,6 +130,7 @@ $sql = "UPDATE users SET name=:name, surname=:surname, sex=:sex WHERE id=:id";
 $stmt= $dpo->prepare($sql);
 $stmt->execute($data);
 
+
 __________________________________________________________________________________________________
 
 $_data = mapper($data); //Remember $where_clause data is still among
@@ -139,7 +140,7 @@ $_clauses = mapper($_data->list["clauses"])->generate_query(" AND ");
 $sql = "UPDATE users SET {$key_val_set} WHERE {$_clauses}";
 $dpo->prepare($sql)->execute($data);
 
-function patch() {
+function patch($connection, $table, $fields, $clauses) {
     $_data = mapper($data); //Remember $where_clause data is still among
     $padded = $_data->pad_keys("=:", "start")->remove_item("where_clause");
     $key_val_set = $paded->generate_query(); //name=:name, surname=:surname, sex=:sex

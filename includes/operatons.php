@@ -19,7 +19,38 @@
         }
         return $returnValue;
     }
-    
+
+/**
+ * @param PDO $connection.
+ * @param string $table.
+ * @param string $fields.
+ * @param array $clauses.
+ */
+function patch($connection, $table, $fields, $clauses) {
+    static $Q;
+    static $object;
+    mapper($clauses)->generate_query(" AND ", "keys",
+        function($padded, $list, $clauses_map) use(&$table, &$fields, &$Q, &$object) {
+            return mapper($fields)->generate_query(", ", "keys",
+                function ($padded, $list1, $fields_map) use($clauses_map, &$table, &$Q, &$list, &$object) {
+                    $Q = "UPDATE $table SET $fields_map WHERE $clauses_map";
+                    $object = mapper($list1->list)->populate($list->list);
+                    return true;
+                });
+        });
+    // $object // $Q
+    //echo $Q; //UPDATE subjects SET menu_name=:menu_name, position=:position, visible=:visible WHERE id=:id
+    $statement = $connection->prepare($Q);
+    if($statement->execute($object->list)) {
+        return true;
+    }
+
+    // show($Q);
+    // show($object);
+    return false;
+}
+
+
 function patch_p($PDO_connection, $table, $fields, $clauses = []) {
     $_data = mapper($fields); //Remember $where_clause data is still among
 //    $padded = $_data->pad_keys("=:", "start")->remove_item("clauses");
@@ -73,12 +104,14 @@ function selection() {
         $selected_page = null;
         $selected_subject = null;
     }
+    return $selected_subject && $selected_page ? $selected_subject :
+        $selected_subject ? $selected_subject : $selected_page;
 }
 function mapper($array) {
 //->keys, ->values, ->pad_keys(), ->pad_values(), ->show()
     if(!class_exists("MAPPER", false)){
         class MAPPER {
-            protected $list = [];
+            public $list = [];
             function __construct() {}
             public function __get($value) {
                 static $ret;
@@ -104,8 +137,17 @@ function mapper($array) {
                 return $this;
             }
             function populate($array) {
-                foreach ($array as $key => $value) {
-                   $this->list[$key] = $value;
+                if (is_array($array)) {
+                    if($this->is_associative()) {
+                        if(!$this->is_associative($array)) {
+                            throw  new Exception("The provided array is incompatible with MAPPER object list");
+                        }
+                    }
+                    foreach ($array as $key => $value) {
+                        $this->list[$key] = $value;
+                    }
+                } else {
+                    throw  new Exception("A true array is required to polulate list");
                 }
                 return $this;
             }
@@ -283,7 +325,40 @@ function mapper($array) {
     $map = new MAPPER();
     return $map->mapper($array);
 }
-    
+
+
+function redirect_to($file_path = null) {
+        if ($file_path) {
+            header("Location: {$file_path}");
+        }
+        exit;
+}
+
+/**
+ * @param string $inputs comma separated strings --- to look up on the provided supperglobal
+ * @param $_REQUEST | $_POST | $_GET | $_COOKIE $supper
+ * @var $errors_bucket error bucket
+ */
+function screen_for_empty($inputs, $supper) {
+    $errors_bucket = "";
+        for_each(explode(",", $inputs), function ($input) use (&$errors_bucket, &$supper) {
+            $input = trim($input);
+            if (!isset($supper[$input])) {
+                $errors_bucket .= "<p>{$input}</p>";
+            }
+        });
+        return $errors_bucket ? $errors_bucket : false;
+}
+
+/**
+ * @param PDO $PDO_connection The database connection object for the requests. Must be PDO type
+ * @param string $table A table name on the database. MAke sure it is created
+ * @param string $fields Default is "*". Examples are "email, password, location"
+ * @param array $clauses associative array map of WHERE clauses ["id" => 2, "firstname" => "iyke", "age" => 31]
+ * @param null $fn A handy function to run on each and every row returned upon retrieval
+ * @return RecursiveArrayIterator
+ * @throws Exception
+ */
 function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = null) {
     static $result;
     static $statement_str;
@@ -376,7 +451,7 @@ function navigation() {
             if ($subject["id"] == $selected_subject["id"]) {
                 $output .=  "class='selected'";
             }
-            $output .=  "> <a href='content.php?subj=$sub'> {$subject['menu_name']}</a></li>";
+            $output .=  "> <a href='edit_subject.php?subj=$sub'> {$subject['menu_name']}</a></li>";
             $output .=  "<ul class='pages'>";
 
             $pages = retrieve($connection,"pages", " * ", ["subject_id" => $subject["id"]],

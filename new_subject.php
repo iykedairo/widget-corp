@@ -26,11 +26,11 @@ selection(); //Pulls in page and subject selection procedures
                     <select name="position">
                         <?php
                         $count = 0;
-                        retrieve("subjects", "*", " ORDER BY POSITION ASC", $connection,
+                        retrieve($connection,"subjects", "*", [],
                             function($v, $k, $r) use (&$count) {
                                 $count++;
                                 echo "<option value='{$count}'>$count</option>";
-                            });
+                            }, " ORDER BY POSITION ASC");
                         $count++;
                         echo "<option value='{$count}'>$count</option>"; //Simulating next postion
                         ?>

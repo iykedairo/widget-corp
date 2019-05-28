@@ -51,16 +51,7 @@ function patch($connection, $table, $fields, $clauses) {
 }
 
 
-function patch_p($PDO_connection, $table, $fields, $clauses = []) {
-    $_data = mapper($fields); //Remember $where_clause data is still among
-//    $padded = $_data->pad_keys("=:", "start")->remove_item("clauses");
-    $padded = $_data->pad_keys(" ", "start")->remove_item("clauses"); //keys will be padded internally on generating
-    $key_val_set = $padded->generate_query(", ", "keys"); //name=:name, surname=:surname, sex=:sex
-    $_clauses = mapper($_data->list["clauses"])->generate_query(" AND ", "keys");
-    $Query = "UPDATE $table SET {$key_val_set} WHERE {$_clauses}";
-    $PDO_connection->prepare($Query)->execute($fields);
-    return true;
-}
+
     function build_sql_insert($table, $data) {
         $key = array_keys($data);
         $val = array_values($data);
@@ -151,6 +142,14 @@ function mapper($array) {
                 }
                 return $this;
             }
+
+            /**
+             * @param string $separator
+             * @param string $_with
+             * @param callable $fn
+             * @return string
+             * @throws Exception
+             */
             function generate_query($separator = ", ", $_with = "keys", $fn = null) {
                 if (!is_callable($fn)) {
                     $fn = function() {};
@@ -343,8 +342,10 @@ function screen_for_empty($inputs, $supper) {
     $errors_bucket = "";
         for_each(explode(",", $inputs), function ($input) use (&$errors_bucket, &$supper) {
             $input = trim($input);
-            if (!isset($supper[$input])) {
-                $errors_bucket .= "<p>{$input}</p>";
+            if (!isset($supper[$input]) || empty($supper[$input])) {
+                if (!is_numeric($supper[$input])) {
+                    $errors_bucket .= "<p>{$input}</p>";
+                }
             }
         });
         return $errors_bucket ? $errors_bucket : false;

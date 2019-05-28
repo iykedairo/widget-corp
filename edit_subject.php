@@ -4,13 +4,6 @@ include_once "./includes/connection.php";
 require_once "./includes/operatons.php";
 include_once "./includes/header.php";
 
-selection(); //Pulls in page and subject selection procedures
-
-
-
-
-
-
 
 
 if (intval($_GET["subj"]) == 0) { //If we didn't get a valid subject id we decline further exec
@@ -18,7 +11,9 @@ if (intval($_GET["subj"]) == 0) { //If we didn't get a valid subject id we decli
     }
 
     if (isset($_POST["submit"])) {
-        if (!screen_for_empty("menu_name, position, visible", $_POST)) {
+        if ( $check = screen_for_empty("menu_name, position, visible", $_POST)) {
+            echo $check;
+        } else {
             $id = $_GET["subj"];
             $menu_name = $_POST["menu_name"];
             $position = $_POST["position"];
@@ -26,10 +21,10 @@ if (intval($_GET["subj"]) == 0) { //If we didn't get a valid subject id we decli
             $fields = ["menu_name" => $menu_name, "position" => $position, "visible" => $visible];
             $clauses = ["id" => $id];
             if (patch($connection, "subjects", $fields, $clauses)) {
-                echo "<p style='font-size: larger'>Records inserted successfully!</p>";
-                redirect_to("content.php");
+                $message = "Records inserted successfully!";
+//                redirect_to("content.php");
             } else {
-                echo "<p style='font-size: larger'>Some issues were encountered</p>";
+                $message = "Some issues were encountered";
             }
         }
     }
@@ -38,7 +33,7 @@ if (intval($_GET["subj"]) == 0) { //If we didn't get a valid subject id we decli
 
 
 
-
+selection(); //Pulls in page and subject selection procedures
 
 
 
@@ -55,6 +50,11 @@ if (intval($_GET["subj"]) == 0) { //If we didn't get a valid subject id we decli
         </td>
         <td id="page">
             <h2>Edit subject: <?php echo $selected_subject["menu_name"]; ?></h2>
+            <?php
+            if (isset($message) && !empty($message)) {
+                echo "<p style='font-size: larger'>{$message}</p>";
+            }
+            ?>
             <form action="edit_subject.php?subj=<?php echo urlencode($selected_subject["id"]); ?>" method="post">
 
                 <p>Subject name: <input type="text" name="menu_name" id="menu_name" value="<?php echo $selected_subject["menu_name"]; ?>"></p>
@@ -85,6 +85,11 @@ if (intval($_GET["subj"]) == 0) { //If we didn't get a valid subject id we decli
                 </p>
 
                 <input type="submit" value="Update Subject" name="submit">
+
+                &nbsp; &nbsp;
+                <a href="delete_subject.php?subj=<?php echo urlencode($selected_subject['id']) ?>"
+                   onclick=" return confirm('Are you sure you want to delete <?php echo $selected_subject["menu_name"] ?>');">
+                    Delete subject</a>
 
             </form>
             <br />

@@ -2,7 +2,7 @@
 
 
 //    store('subjects', 'id, date, email, response', $con);
-   function delete_record($connection, $table, $clauses, $limit = 1) {
+   function delete_record($connection, $table, $clauses, $limit = 1) { 
     static $Q;
     mapper($clauses)->generate_query(" AND ", "keys",
         function ($pad, $list, $generated) use ($clauses, $connection, $table, $limit, &$Q) {
@@ -17,24 +17,51 @@
     }
 
 }
-    function store($PDO_connection, $table, Array $fields, $clauses = ""){
-        $returnValue = [];
-        try {
-            $Query = build_sql_insert($table, $fields);
-            $stmt = $PDO_connection->prepare($Query);
-            if ($stmt->execute()){
-                $returnValue["success"] = true;
-                $returnValue["message"] = "SUCCESS!";
-            }
-        }
-        catch(PDOException $error) {
-            $returnValue["success"] = false;
-            $returnValue["message"] = "<h1>Record could not be created at this time</h1>" .
-                "<p style='color: red;'>$Query</p>" . $error->getMessage() . "<br />";
-        }
-        return $returnValue;
-    }
 
+/**
+ * @param $PDO_connection
+ * @param string $table
+ * @param array $fields
+ * @param array $clauses
+ */
+function store($PDO_connection, $table, $fields, $clauses = []) {
+    $Q = "";
+    $returnValue = [];
+    try {
+        $field_placeholders = str_repeat("?, ", count($fields) - 1) . "?";
+        $Q = "INSERT INTO $table(". join(", ", array_keys($fields)) . ") VALUES( $field_placeholders ) ";
+        // $Q = "INSERT INTO $table (". $field_placeholders .") VALUES( ". $field_placeholders .") ";
+            if (count($clauses) > 0) {
+                $clause_placeholders = build_clauses($clauses);
+                    $Q .= " WHERE ". $clause_placeholders; //insert with where clause is less often
+            }
+// echo $Q;
+        $array = array_merge(array_values($fields), array_values($clauses));
+        // $array = array_merge(array_keys($fields), array_values($fields), array_values($clauses));
+        $statement = $PDO_connection->prepare($Q);
+        $statement->execute($array);
+        $returnValue["success"] = true;
+        $returnValue["message"] = "SUCCESS!";
+    }catch (PDOException $error) {
+        $returnValue["success"] = false;
+        $returnValue["message"] = "<h1>Record could not be created at this time</h1>" .
+            "<p style='color: red;'>$Q</p>" . $error->getMessage() . "<br />";
+    }
+    return $returnValue;
+}
+function build_clauses($array) {
+    $x = "";
+    $len = count($array) - 1;
+    $counter = 0;
+    foreach($array as $k => $v) {
+        if($counter++ < $len) {
+            $x .=  "$k = ? AND  ";
+        } else {
+            $x .=  "$k = ?  ";
+        }
+    }
+    return $x;
+}
 /**
  * @param PDO $connection.
  * @param string $table.
@@ -67,21 +94,10 @@ function patch($connection, $table, $fields, $clauses) {
 
 
 
-    function build_sql_insert($table, $data) {
-        $key = array_keys($data);
-        $val = array_values($data);
-        $sql = "INSERT INTO $table (" . implode(', ', $key) . ") "
-            . "VALUES ('" . implode("', '", $val) . "')";
-
-        return($sql);
-    }
-
-//    retrieve('subjects', 'id, date, email, response', $con);
-
-
 function for_each($list, $fn) {
+    $countr = 0;
     foreach($list as $k => $v) {
-        if ($fn( $v, $k, $list )) {
+        if ($fn( $v, $k, $list, $countr++ )) {
             break;
         }
     }
@@ -263,8 +279,9 @@ function mapper($array) {
              * @return void
              */
             function for_each($fn) {
+                $countr = 0;
                 foreach($this->list as $key => $val) {
-                    if(($result = $fn($val, $key, $this->list, $this))) {
+                    if(($result = $fn($val, $key, $this->list, $this, $countr++))) {
                         return $result;
                     }
                 }
@@ -521,35 +538,7 @@ function get_selected_id($table, $row_id) {
         return $row;
     }
 }
-function build_sql_insert_p($table, $data) {
-    $key = array_keys($data);
-    $val = array_values($data);
-    $sql = "INSERT INTO $table (" . implode(', ', $key) . ") "
-        . "VALUES ('" . implode("', '", $val) . "')";
 
-    /*
-
-    $q = "INSERT INTO $table VALUES(?, ?, ?, ?)";
-    $stmt = $db->prepare($q);
-    $stmt->bind_params("sssd", $isbn, $author, $title, $price);
-    $stmt->execute();
-    echo $stmt->affected_rows . " books inserted into database.";
-    $stmt->close();
-    */
-    $params_values = "";
-    for ($iota = 1; $iota < count($key); $iota++) {
-        $params_values .= $iota !== count($key) ? "?," : "?";
-    }
-
-    global $connection;
-    $Q = "INSERT INTO $table VALUES ( $params_values )";
-    $stmt = $connection->prepare($Q);
-    $stmt->bind_params("ssss", implode(", ", $val));
-    $stmt->execute();
-
-
-    return($sql);
-}
 
 function get_all_subjects() {}
 function get_subject_pages() {}

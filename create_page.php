@@ -14,8 +14,8 @@ $array = [
 "content" => $_POST["content"]
 ];
 
-
-$request = store($connection, "pages", $array, "");
+// store($connection, "pages", $array, []);
+$request = store($connection, "pages", $array, []);
 if ($request["success"] === true) {
 //    Success
      redirect_to("content.php");

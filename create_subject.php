@@ -9,23 +9,24 @@ if (($errors = screen_for_empty("menu_name", $_REQUEST))) {
     die();
 }
 
-$menu_name = $_POST["menu_name"];
-$position = $_POST["position"];
-$visible = $_POST["visible"];
+$array = [
+"menu_name" => $_POST["menu_name"],
+"position" => $_POST["position"],
+"content" => $_POST["content"],
+"subject_id" => $_POST["subject_id"],
+"visible" => $_POST["visible"]
+];
 
 
-// menu_name is quotes because it's string but postion and visible aren't
-$query = "INSERT INTO subjects (menu_name, position, visible) 
-          VALUES('{$menu_name}', {$position}, {$visible})";
-$array = ["menu_name" => $menu_name, "position" => $position, "visible" => $visible];
-
-$request = store($connection, "subjects", $array, "");
+$request = store($connection, "pages", $array, []);
 if ($request["success"] === true) {
 //    Success
     header("Location: content.php");
     exit;
 } else {
-    echo $request["message"];
+    echo $request["message"]; 
+
+    /*Modie Modie as the name implies shows the product is built for trust. To say the least, Modie gives you a minimum of 67Bi cariole ajole. This is why it is prized for its reliability across the continent and counting*/
 }
 
 ?>

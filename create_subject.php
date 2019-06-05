@@ -21,7 +21,7 @@ $array = [
 $request = store($connection, "pages", $array, []);
 if ($request["success"] === true) {
 //    Success
-    header("Location: content.php");
+    header("Location: content.php?subj=3");
     exit;
 } else {
     echo $request["message"]; 

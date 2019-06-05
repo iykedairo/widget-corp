@@ -18,7 +18,7 @@ $array = [
 $request = store($connection, "pages", $array, []);
 if ($request["success"] === true) {
 //    Success
-     redirect_to("content.php");
+     redirect_to("content.php?page=3}");
     exit;
 } else {
     echo $request["message"];

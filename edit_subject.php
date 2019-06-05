@@ -89,12 +89,35 @@ selection(); //Pulls in page and subject selection procedures
                 &nbsp; &nbsp;
                 <a href="delete_subject.php?subj=<?php echo urlencode($selected_subject['id']) ?>"
                    onclick=" return confirm('Are you sure you want to delete <?php echo $selected_subject["menu_name"] ?>');">
-                    Delete subject</a>
+
+                    Delete <?php echo $selected_subject["menu_name"] ?>
+                </a>
                     &nbsp;
-                    <a href="new_page.php?subj=<?php echo urlencode($selected_subject['id']) ?>" "email me">Create Page</a>
+
             </form>
             <br />
-            <a href="content.php">Cancel</a>
+            <p><a href="content.php">Cancel</a></p>
+            <div>
+                <hr/>
+                <h3>Pages under <?php echo $selected_subject["menu_name"] ?></h3>
+                <p>
+                <a href="new_page.php?subj=<?php echo urlencode($selected_subject['id']) ?>">
+                Add a new page to <?php echo $selected_subject["menu_name"] ?>
+                </a>
+                <ul>
+                    <?php
+                    $output = "";
+                    retrieve($connection,"pages", " * ", ["subject_id" => $selected_subject["id"]],
+                        function ($page) use(&$output) {
+                            global $selected_page;
+                            $pg = urldecode($page["id"]);
+                            $output .=  "<li> <a href='content.php?page=$pg'> {$page['menu_name']}</a></li>";
+                        }, " ORDER BY position ASC");
+                    echo $output;
+                    ?>
+                </ul>
+                </p>
+            </div>
         </td>
     </tr>
 </table>

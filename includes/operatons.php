@@ -468,7 +468,7 @@ function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = 
     }
     return $result;
     }
-function navigation() {
+function navigation($url = "content.php") {
     global $connection;
     $output = "";
     if ($connection == false) {
@@ -476,7 +476,10 @@ function navigation() {
         die();
     }
     $subjects = retrieve($connection,"subjects", "*", [],
-        function ($subject) use(&$connection, &$output, &$subjects) {
+        function ($subject) use(&$connection, &$output, &$subjects, $url) {
+        if ($url != "content.php" && $subject["visible"] != 1) {
+            return false;
+        }
             global $connection;
             global $selected_subject;
             $sub = urldecode($subject["id"]);
@@ -484,17 +487,32 @@ function navigation() {
             if ($subject["id"] == $selected_subject["id"]) {
                 $output .=  "class='selected'";
             }
-            $output .=  "> <a href='edit_subject.php?subj=$sub'> {$subject['menu_name']}</a></li>";
+            if ($url == "content.php") {
+                $output .=  "> <a href='edit_subject.php?subj=$sub'> {$subject['menu_name']}</a></li>";
+            } else {
+                $output .=  "> <a href='{$url}?subj=$sub'> {$subject['menu_name']}</a></li>";
+            }
+            if ($url != "content.php") {
+                if($subject["id"] != $selected_subject["id"]){
+                    return false;
+                }
+            }
             $output .=  "<ul class='pages'>";
 
-            $pages = retrieve($connection,"pages", " * ", ["subject_id" => $subject["id"]],
-                function ($page) use(&$output) {
-                    global $selected_page;
-                    $pg = urldecode($page["id"]);
-                    $output .=  "<li ";
-                    if ($page["id"] == $selected_page["id"]) { $output .=  "class='selected'"; }
-                    $output .=  "> <a href='content.php?page=$pg'> {$page['menu_name']}</a></li>";
-                }, " ORDER BY position ASC");
+        $pages = retrieve($connection,"pages", " * ", ["subject_id" => $subject["id"]],
+            function ($page) use(&$output, $url) {
+                if ($url != "content.php") {
+                    if ($page["visible"] != 1) {
+                        return false;
+                    }
+                }
+                global $selected_page;
+                $pg = urldecode($page["id"]);
+                $output .=  "<li ";
+                if ($page["id"] == $selected_page["id"]) { $output .=  "class='selected'"; }
+                $output .=  "> <a href='{$url}?page=$pg'> {$page['menu_name']}</a></li>";
+            }, " ORDER BY position ASC");
+
             $output .=  "</ul>";
         }, " ORDER BY position ASC" );
 

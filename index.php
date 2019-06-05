@@ -1,21 +1,50 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Widget Corp</title>
-    <meta name="description" content="Widget Corp">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
-  </head>
-  <body>
-    <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-    
-    <script src=""></script>
-  </body>
-</html>
+
+    <?php
+    include_once "./includes/connection.php";
+    require_once "./includes/operatons.php";
+    include_once "./includes/header.php";
+
+    selection(); //Pulls in page and subject selection procedures
+    ?>
+
+    <table id="structure">
+        <tr>
+            <td id="navigation">
+                <ul class="subjects">
+                    <?php
+                    echo navigation("index.php");
+                    ?>
+                </ul>
+                <br />
+                <a href="new_subject.php">+ Add a new subject</a>
+            </td>
+            <td id="page">
+                <h2>Welcome to Widget Corp</h2>
+                <?php
+                if (!is_null($selected_subject)) {
+                    echo "<h2>{$selected_subject["menu_name"]}</h2>";
+                }
+
+                else if (!is_null($selected_page)) {
+                    $subject = get_selected_id("subjects", $selected_page["subject_id"]);
+                    $encodedSubjectId = urlencode($subject["id"]);
+                    $encodedPageId = urlencode($selected_page["id"]);
+                    $subject_name = $subject["menu_name"];
+                    $page_name = $selected_page["menu_name"];
+                    echo "
+
+            <div>
+            <p>{$selected_page['content']}</p>
+            
+</div>
+                
+            ";
+
+                } else {
+//                    echo  "<h2>Select a page to edit</h2>";
+                }
+                ?>
+            </td>
+        </tr>
+    </table>
+    <?php require "./includes/footer.php"; ?>

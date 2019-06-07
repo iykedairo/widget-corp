@@ -4,7 +4,7 @@
     require_once "./includes/operatons.php";
     include_once "./includes/header.php";
 
-    selection(); //Pulls in page and subject selection procedures
+    selection(true); //Pulls in page and subject selection procedures
     ?>
 
     <table id="structure">
@@ -12,36 +12,28 @@
             <td id="navigation">
                 <ul class="subjects">
                     <?php
-                    echo navigation("index.php");
+                    echo navigation("index.php", true);
                     ?>
                 </ul>
-                <br />
-                <a href="new_subject.php">+ Add a new subject</a>
             </td>
             <td id="page">
-                <h2>Welcome to Widget Corp</h2>
-                <?php
-                if (!is_null($selected_subject)) {
-                    echo "<h2>{$selected_subject["menu_name"]}</h2>";
-                }
 
-                else if (!is_null($selected_page)) {
-                    $subject = get_selected_id("subjects", $selected_page["subject_id"]);
+                <?php
+
+                if (!is_null($selected_subject) && isset($selected_subject["menu_name"])) {
+                    echo "<h2>{$selected_subject["menu_name"]}</h2>";
+                } else {
+                    echo "<h2>Welcome to Widget Corp</h2>";
+                }
+                 if (!is_null($selected_page) && isset($selected_page["subject_id"])) {
+                    $subject = get_selected_by_id("subjects", $selected_page["subject_id"], true);
                     $encodedSubjectId = urlencode($subject["id"]);
                     $encodedPageId = urlencode($selected_page["id"]);
                     $subject_name = $subject["menu_name"];
                     $page_name = $selected_page["menu_name"];
-                    echo "
-
-            <div>
+            echo "<div>
             <p>{$selected_page['content']}</p>
-            
-</div>
-                
-            ";
-
-                } else {
-//                    echo  "<h2>Select a page to edit</h2>";
+            </div>";
                 }
                 ?>
             </td>

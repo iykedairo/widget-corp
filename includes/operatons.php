@@ -2,7 +2,7 @@
 
 
 //    store('subjects', 'id, date, email, response', $con);
-   function delete_record($connection, $table, $clauses, $limit = 1) { 
+function delete_record($connection, $table, $clauses, $limit = 1) {
     static $Q;
     mapper($clauses)->generate_query(" AND ", "keys",
         function ($pad, $list, $generated) use ($clauses, $connection, $table, $limit, &$Q) {
@@ -31,10 +31,10 @@ function store($PDO_connection, $table, $fields, $clauses = []) {
         $field_placeholders = str_repeat("?, ", count($fields) - 1) . "?";
         $Q = "INSERT INTO $table(". join(", ", array_keys($fields)) . ") VALUES( $field_placeholders ) ";
         // $Q = "INSERT INTO $table (". $field_placeholders .") VALUES( ". $field_placeholders .") ";
-            if (count($clauses) > 0) {
-                $clause_placeholders = build_clauses($clauses);
-                    $Q .= " WHERE ". $clause_placeholders; //insert with where clause is less often
-            }
+        if (count($clauses) > 0) {
+            $clause_placeholders = build_clauses($clauses);
+            $Q .= " WHERE ". $clause_placeholders; //insert with where clause is less often
+        }
 // echo $Q;
         $array = array_merge(array_values($fields), array_values($clauses));
         // $array = array_merge(array_keys($fields), array_values($fields), array_values($clauses));
@@ -112,22 +112,23 @@ function map($list, $fn) {
     return $new_list;
 }
 
-function selection() {
+function selection($public = false) {
     global $selected_subject;
+    $selected_subject = null;
     global  $selected_page;
+    $selected_page = null;
 
     if (isset($_GET["subj"])) {
-        $selected_subject = get_selected_id("subjects", $_GET["subj"]);
-        $selected_page = null;
+        $selected_subject = get_selected_by_id("subjects", $_GET["subj"]);
+        if($public && $selected_subject && isset($selected_subject["id"])) {
+            $selected_page = @get_pages_by_subject_id($selected_subject["id"], $public)[0];
+        }
     } else if (isset($_GET["page"])) {
-        $selected_page = get_selected_id("pages", $_GET["page"]);
-        $selected_subject = null;
-    } else {
-        $selected_page = null;
-        $selected_subject = null;
+        $selected_page = get_selected_by_id("pages", $_GET["page"]);
+        if ($public && $selected_page && $selected_page["subject_id"]) {
+            $selected_subject = get_selected_by_id("subjects", $selected_page["subject_id"]);
+        }
     }
-    return $selected_subject && $selected_page ? $selected_subject :
-        $selected_subject ? $selected_subject : $selected_page;
 }
 function mapper($array) {
 //->keys, ->values, ->pad_keys(), ->pad_values(), ->show()
@@ -359,10 +360,10 @@ function mapper($array) {
 
 
 function redirect_to($file_path = null) {
-        if ($file_path) {
-            header("Location: {$file_path}");
-        }
-        exit;
+    if ($file_path) {
+        header("Location: {$file_path}");
+    }
+    exit;
 }
 
 /**
@@ -372,15 +373,15 @@ function redirect_to($file_path = null) {
  */
 function screen_for_empty($inputs, $supper) {
     $errors_bucket = "";
-        for_each(explode(",", $inputs), function ($input) use (&$errors_bucket, &$supper) {
-            $input = trim($input);
-            if (!isset($supper[$input]) || empty($supper[$input])) {
-                if (!is_numeric($supper[$input])) {
-                    $errors_bucket .= "<p>{$input}</p>";
-                }
+    for_each(explode(",", $inputs), function ($input) use (&$errors_bucket, &$supper) {
+        $input = trim($input);
+        if (!isset($supper[$input]) || empty($supper[$input])) {
+            if (!is_numeric($supper[$input])) {
+                $errors_bucket .= "<p>{$input}</p>";
             }
-        });
-        return $errors_bucket ? $errors_bucket : false;
+        }
+    });
+    return $errors_bucket ? $errors_bucket : false;
 }
 
 /**
@@ -467,7 +468,7 @@ function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = 
         }
     }
     return $result;
-    }
+}
 function navigation($url = "content.php") {
     global $connection;
     $output = "";
@@ -477,9 +478,9 @@ function navigation($url = "content.php") {
     }
     $subjects = retrieve($connection,"subjects", "*", [],
         function ($subject) use(&$connection, &$output, &$subjects, $url) {
-        if ($url != "content.php" && $subject["visible"] != 1) {
-            return false;
-        }
+            if ($url != "content.php" && $subject["visible"] != 1) {
+                return false;
+            }
             global $connection;
             global $selected_subject;
             $sub = urldecode($subject["id"]);
@@ -499,26 +500,26 @@ function navigation($url = "content.php") {
             }
             $output .=  "<ul class='pages'>";
 
-        $pages = retrieve($connection,"pages", " * ", ["subject_id" => $subject["id"]],
-            function ($page) use(&$output, $url) {
-                if ($url != "content.php") {
-                    if ($page["visible"] != 1) {
-                        return false;
+            $pages = retrieve($connection,"pages", " * ", ["subject_id" => $subject["id"]],
+                function ($page) use(&$output, $url) {
+                    if ($url != "content.php") {
+                        if ($page["visible"] != 1) {
+                            return false;
+                        }
                     }
-                }
-                global $selected_page;
-                $pg = urldecode($page["id"]);
-                $output .=  "<li ";
-                if ($page["id"] == $selected_page["id"]) { $output .=  "class='selected'"; }
-                $output .=  "> <a href='{$url}?page=$pg'> {$page['menu_name']}</a></li>";
-            }, " ORDER BY position ASC");
+                    global $selected_page;
+                    $pg = urldecode($page["id"]);
+                    $output .=  "<li ";
+                    if ($page["id"] == $selected_page["id"]) { $output .=  "class='selected'"; }
+                    $output .=  "> <a href='{$url}?page=$pg'> {$page['menu_name']}</a></li>";
+                }, " ORDER BY position ASC");
 
             $output .=  "</ul>";
         }, " ORDER BY position ASC" );
 
-if (!$subjects) {
-    die("No subjects returned");
-}
+    if (!$subjects) {
+        die("No subjects returned");
+    }
     return $output;
 }
 
@@ -546,7 +547,7 @@ function show($var = "Some interesting stuff here!", $verbose = false) {
 }
 
 
-function get_selected_id($table, $row_id) {
+function get_selected_by_id($table, $row_id) {
     global $connection;
     if ($row_id) {
         $clauses = "WHERE id = $row_id";
@@ -555,6 +556,24 @@ function get_selected_id($table, $row_id) {
         });
         return $row;
     }
+}
+
+function get_pages_by_subject_id($subject_id, $public = false) {
+    global $connection;
+    if (!$subject_id) {
+        return null;
+    }
+    $records = retrieve($connection, "pages", "*", ["subject_id" => $subject_id]);
+    if ($public) {
+        $recs = $records;
+        $records = [];
+        foreach($recs as $record) {
+            if ($record["visible"] == 1) {
+                $records[] = $record;
+            }
+        }
+    }
+    return $records;
 }
 
 

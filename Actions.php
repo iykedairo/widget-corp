@@ -7,6 +7,27 @@ class Database {
 
     var $connection = null;
     var $data = [];
+
+
+
+
+function clean_sql_flags($str) {
+    $pieces = $str->split("");
+    foreach ($pieces as $key => $value) {
+        if (!/[A-z0-9]/.test($value)) {
+            thow new Exception($value . " is not a valid sql flag. Please don't try to trick my system!")
+        }
+    }
+}
+
+function fetch_page() {} //Just give me a page
+function fetch_pages() {} //Give me all named pages
+function fetch_subject() {} //Just give me a subject
+function fetch_subjects() {} //Give me all named subjects
+
+
+
+
     function __construct() {
         try{
             echo "starting ... <br>";

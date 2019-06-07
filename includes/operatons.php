@@ -469,20 +469,24 @@ function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = 
     }
     return $result;
 }
-function navigation($url = "content.php") {
+function navigation($url = "content.php", $public = false) {
     global $connection;
+    $clause = [];
     $output = "";
-    if ($connection == false) {
-        echo "<h1>There is no connections. We recline! </h1>";
-        die();
+
+    if ($public) {
+        $clause["visible"] = 1;
     }
-    $subjects = retrieve($connection,"subjects", "*", [],
-        function ($subject) use(&$connection, &$output, &$subjects, $url) {
-            if ($url != "content.php" && $subject["visible"] != 1) {
-                return false;
-            }
+
+    if ($connection == false) {
+        die("There is no connections. Application will then stop execution right here!");
+    }
+
+    $subjects = retrieve($connection,"subjects", "*", $clause,
+        function ($subject) use(&$output, $url, $public) {
             global $connection;
             global $selected_subject;
+
             $sub = urldecode($subject["id"]);
             $output .=  "<li ";
             if ($subject["id"] == $selected_subject["id"]) {
@@ -499,14 +503,12 @@ function navigation($url = "content.php") {
                 }
             }
             $output .=  "<ul class='pages'>";
-
-            $pages = retrieve($connection,"pages", " * ", ["subject_id" => $subject["id"]],
+            $clause = ["subject_id" => $subject["id"]];
+            if ($public) {
+                $clause["visible"] = 1;
+            }
+            $pages = retrieve($connection,"pages", " * ", $clause,
                 function ($page) use(&$output, $url) {
-                    if ($url != "content.php") {
-                        if ($page["visible"] != 1) {
-                            return false;
-                        }
-                    }
                     global $selected_page;
                     $pg = urldecode($page["id"]);
                     $output .=  "<li ";

@@ -393,7 +393,7 @@ function screen_for_empty($inputs, $supper) {
  * @return RecursiveArrayIterator
  * @throws Exception
  */
-function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = null) {
+function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = null, $flags = "") {
     static $result;
     static $statement_str;
     static $fields_list = [];
@@ -456,7 +456,8 @@ function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = 
     if (!$clauses) {
         $clauses = "";
     }
-    $statement = $PDO_connection->prepare($statement_str . $clauses);
+    $statement_str .= $clauses . " " . clean_sql_flags($flags);
+    $statement = $PDO_connection->prepare($statement_str);
     if($statement->execute(array_merge($all_lists, $clauses_obj))) {
         $statement->setFetchMode(PDO::FETCH_ASSOC);
         $result = new RecursiveArrayIterator($statement->fetchAll());
@@ -468,6 +469,20 @@ function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = 
         }
     }
     return $result;
+}
+function clean_sql_flags($flags) {
+    if (!$flags) {
+        return " ";
+    }
+    $temp = $flags;
+    $flags = "";
+    foreach (preg_split("/\s+/", $temp, 0, PREG_SPLIT_NO_EMPTY) as $flag) {
+        if (!preg_match("/^[a-zA-Z0-9]+$/", $flag)) {
+            throw new Exception($flag . " is not a valid MySQL flag");
+        }
+        $flags .= " " . $flag . " ";
+    }
+    return $flags;
 }
 function navigation($url = "content.php", $public = false) {
     global $connection;

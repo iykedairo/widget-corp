@@ -21,18 +21,19 @@
                 <?php
 
                 if (!is_null($selected_subject) && isset($selected_subject["menu_name"])) {
-                    echo "<h2>{$selected_subject["menu_name"]}</h2>";
+                    echo "<h2>" . htmlentities($selected_subject['menu_name']) ."</h2>";
                 } else {
                     echo "<h2>Welcome to Widget Corp</h2>";
                 }
                  if (!is_null($selected_page) && isset($selected_page["subject_id"])) {
-                    $subject = get_selected_by_id("subjects", $selected_page["subject_id"], true);
-                    $encodedSubjectId = urlencode($subject["id"]);
-                    $encodedPageId = urlencode($selected_page["id"]);
-                    $subject_name = $subject["menu_name"];
-                    $page_name = $selected_page["menu_name"];
+                    //$subject = get_selected_by_id("subjects", $selected_page["subject_id"], true);
+                    //$encodedSubjectId = urlencode($subject["id"]);
+                    //$encodedPageId = urlencode($selected_page["id"]);
+                    //$subject_name = $subject["menu_name"];
+                    //$page_name = $selected_page["menu_name"];
+                     $allowed_tags = "<b><p><br><a><h1><i>";
             echo "<div>
-            <p>{$selected_page['content']}</p>
+            <p>". strip_tags(nl2br("{$selected_page['content']}"), "{$allowed_tags}") . "</p>
             </div>";
                 }
                 ?>

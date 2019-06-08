@@ -370,6 +370,7 @@ function redirect_to($file_path = null) {
  * @param string $inputs comma separated strings --- to look up on the provided supperglobal
  * @param $_REQUEST | $_POST | $_GET | $_COOKIE $supper
  * @var $errors_bucket error bucket
+ * @return sring | false it returns error string or false
  */
 function screen_for_empty($inputs, $supper) {
     $errors_bucket = "";
@@ -387,7 +388,7 @@ function screen_for_empty($inputs, $supper) {
 /**
  * @param PDO $PDO_connection The database connection object for the requests. Must be PDO type
  * @param string $table A table name on the database. MAke sure it is created
- * @param string $fields Default is "*". Examples are "email, password, location"
+ * @param string $fields Default is "*". A string of comma separated values . Example "email, password, location"
  * @param array $clauses associative array map of WHERE clauses ["id" => 2, "firstname" => "iyke", "age" => 31]
  * @param null $fn A handy function to run on each and every row returned upon retrieval
  * @return RecursiveArrayIterator
@@ -395,17 +396,16 @@ function screen_for_empty($inputs, $supper) {
  */
 function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = null, $flags = "") {
     static $result;
-    static $statement_str;
-    static $fields_list = [];
     static $all_lists = [];
-    static $flat = false;
     static $clauses_obj = [];
-    $fields_padding = "keys";
+    if (!$fields) {
+        return false;
+    }
     if ($clauses && !is_associative($clauses)) {
         echo json_encode($clauses);
         throw new Exception("clauses can only be an associative array for now and only WHERE clauses are supported currently");
     } else if ($clauses) {
-        $str = "WHERE ";
+        $str = " WHERE ";
         $it = 0;
         mapper($clauses)->for_each(
             function ($value, $key, $all, $_this) use(&$clauses, &$str, &$it, &$clauses_obj) {
@@ -418,49 +418,27 @@ function retrieve ($PDO_connection, $table, $fields = "*", $clauses = [], $fn = 
             });
         $clauses = $str;
     }
-    if (is_string($fields) || is_array($fields)) {
-        if (is_string($fields)) {
-            if (trim($fields) != "*") {
-// turn  "menu_name, id, position" to ["menu_name", "id", "position"]
-                $fields = explode(",", $fields);
-                $fields_list = $fields;
-                $flat = true;
-            }
-        } else if (!is_associative($fields)) {
-            $fields_list = $fields;
-            $flat = true; //No need to create. Just toggle and use
-//  ["menu_name", "id", "position"] just create ?, ?, ? and use values
+    if (!is_string($fields) && !is_array($fields)) {
+        throw new Exception("Fields must be string of comma separated values or a simple array");
+    } 
+    if (is_array($fields)) { //It has not changed to array so it is the string - "*"
+        if (is_associative($fields)) {
+            throw new Exception("A simple array required but associative array provided");
         }
-    } else {
-        throw new Exception("Fields must be string or array");
+        $fields = join(", ", $fields);
     }
-    if (is_string($fields)) { //It has not changed to array so it is the string - "*"
-        $statement_str = "SELECT * FROM $table ";
-    } else { //It is an array
-        if ($flat) {
-            $question_marks = str_repeat("?, ", count($fields) - 1)." ? ";
-            $fields = $question_marks;
-        } else { //no one will ever come here
-            mapper($fields)->generate_query(",", "keys",
-                function($modified, $original, $generated) use(&$fields, &$fields_list) {
-                    $fields = $generated; //Value of fields has changed here to string
-                    $fields_list = $original;
-//                $fields_list->populate($clauses_map->list);
-                });
-        }
-        $all_lists = $flat ? array_values($fields_list) : $fields_list->list;
-        $statement_str = "SELECT ". $fields ." FROM " . $table;
-//        $statement_str = "SELECT ?, ? FROM subjects";
-    }
+        $statement_str = "SELECT $fields FROM $table ";
 //    echo $fields;
     if (!$clauses) {
         $clauses = "";
     }
     $statement_str .= $clauses . " " . clean_sql_flags($flags);
     $statement = $PDO_connection->prepare($statement_str);
-    if($statement->execute(array_merge($all_lists, $clauses_obj))) {
+//    show($statement);
+    if(($results = $statement->execute(array_merge($all_lists, $clauses_obj)))) {
+//        show($results);
         $statement->setFetchMode(PDO::FETCH_ASSOC);
-        $result = new RecursiveArrayIterator($statement->fetchAll());
+        $result = $statement->fetchAll();
 
         foreach($result as $k => $v) {
             if ( ($current = (is_callable($fn) ? $fn: function(){})( $v, $k, $result ) )) {
@@ -550,6 +528,7 @@ function is_associative($arr) {
     return array_keys($arr) !== range(0, count($arr) - 1);
 }
 function show($var = "Some interesting stuff here!", $verbose = false) {
+    echo "<h1></h1>";
     if (is_string($var)) {
         echo $var;
     } else if ($verbose) {
@@ -561,6 +540,7 @@ function show($var = "Some interesting stuff here!", $verbose = false) {
     } else {
         print_r($var);
     }
+    echo "<h1></h1>";
 }
 
 
